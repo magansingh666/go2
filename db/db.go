@@ -50,7 +50,7 @@ func printAllProducts() {
 }
 
 func CreateProuduct(b []byte) error {
-	fmt.Println("crating product....")
+	fmt.Println("crating product....", string(b))
 	p := models.Product{}
 	e := json.Unmarshal(b, &p)
 	if e != nil {

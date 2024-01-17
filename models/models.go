@@ -6,20 +6,8 @@ type Product struct {
 	Code string
 }
 
-type Request struct {
-	ClientId    string
-	UserId      string
-	MetaData    string
-	Data        string
-	ContextInfo string
-	Command     string
-}
-
-type Response struct {
-	ClientId    string
-	UserId      string
-	MetaData    string
-	Data        string
-	ContextInfo string
-	Command     string
+type Massage struct {
+	ClientId string
+	UserId   string
+	Msg      []byte
 }
