@@ -49,19 +49,25 @@ func printAllProducts() {
 	fmt.Println(p)
 }
 
-func CreateProuduct(b []byte) error {
-	fmt.Println("crating product....", string(b))
+func CreateProuduct(i interface{}) (models.Product, error) {
+
+	fmt.Println("crating product....", i)
 	p := models.Product{}
-	e := json.Unmarshal(b, &p)
+	b, e := json.Marshal(i)
 	if e != nil {
 		fmt.Print(e)
-		return e
+	}
+
+	e = json.Unmarshal(b, &p)
+	if e != nil {
+		fmt.Print("could not unmarshal", e)
+		return p, e
 	}
 	e = DBRef.Create(&p).Error
 	if e != nil {
 		fmt.Print(e)
-		return e
+		return p, e
 	}
-	return nil
+	return p, nil
 
 }

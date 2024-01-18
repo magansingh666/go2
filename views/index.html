@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>WebSocket Test (100 Connections)</title>
+  </head>
+  <body>
+    <h1>WebSocket Connections: <span id="connectionCount">0</span></h1>
+    <div id="messages"></div>
+
+    <script>
+      const socketCount = 100;
+      const sockets = [];
+
+      function grs(length = 6) {
+        const characters = "0123456789abcdefghijklmnopqrstuvwxyz";
+        const charactersLength = characters.length;
+        let result = "";
+        for (let i = 0; i < length; i++) {
+          result += characters.charAt(
+            Math.floor(Math.random() * charactersLength)
+          );
+        }
+        return result;
+      }
+
+      function createSocket(i) {
+        const socket = new WebSocket("ws://localhost:3000/ws/" + grs() + "/" + grs()); // Replace '8080' with your server's port
+
+        socket.onopen = () => {
+          console.log("\n connection opened", i)
+        };
+
+        socket.onmessage = (event) => {
+          console.log("\n message received from socket number ", i, " ", event.data)
+        };
+
+        socket.onerror = (error) => {
+          console.error("WebSocket error on connection number ", i , "  ",error);
+        };
+
+        socket.onclose = () => {
+          console.log("WebSocket connection closed ", i);
+        };
+
+        sockets.push(socket);
+      }
+
+      for (let i = 0; i < socketCount; i++) {
+        createSocket(i);
+      }
+    </script>
+  </body>
+</html>
