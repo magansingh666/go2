@@ -1,53 +1,89 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>WebSocket Test (100 Connections)</title>
-  </head>
-  <body>
-    <h1>WebSocket Connections: <span id="connectionCount">0</span></h1>
-    <div id="messages"></div>
 
-    <script>
-      const socketCount = 100;
-      const sockets = [];
+<head>
+  <title>WebSocket Test</title>
+</head>
 
-      function grs(length = 6) {
-        const characters = "0123456789abcdefghijklmnopqrstuvwxyz";
-        const charactersLength = characters.length;
-        let result = "";
-        for (let i = 0; i < length; i++) {
-          result += characters.charAt(
-            Math.floor(Math.random() * charactersLength)
-          );
-        }
-        return result;
+<body>
+
+  <h1>Web Socket Connection</h1>
+  <h3>open browser console to view message </h3>
+  <br />
+  <p>Enter number of connections:</p>
+  <input type="text" id="i1" name="i1">
+
+  <button onclick="connect()">connect</button>
+  <br />
+  <br />
+  <br />
+  <br />
+  <button onclick="send()">send product create data on each web socket</button>
+
+
+  <script>
+    
+    const sockets = [];
+    // function to generate a random string.
+    function grs(length = 6) {
+      const characters = "0123456789abcdefghijklmnopqrstuvwxyz";
+      const charactersLength = characters.length;
+      let result = "";
+      for (let i = 0; i < length; i++) {
+        result += characters.charAt(
+          Math.floor(Math.random() * charactersLength)
+        );
       }
+      return result;
+    }
 
-      function createSocket(i) {
-        const socket = new WebSocket("ws://localhost:3000/ws/" + grs() + "/" + grs()); // Replace '8080' with your server's port
+    function createSocket(i) {
+      const socket = new WebSocket("ws://localhost:3000/ws/" + grs() + "/" + grs()); // Replace '8080' with your server's port
 
-        socket.onopen = () => {
-          console.log("\n connection opened", i)
-        };
+      socket.onopen = () => {
+        console.log("\n connection opened", i)
+      };
 
-        socket.onmessage = (event) => {
-          console.log("\n message received from socket number ", i, " ", event.data)
-        };
+      socket.onmessage = (event) => {
+        console.log("\n message received from socket number ", i, " ", event.data)
+      };
 
-        socket.onerror = (error) => {
-          console.error("WebSocket error on connection number ", i , "  ",error);
-        };
+      socket.onerror = (error) => {
+        console.error("WebSocket error on connection number ", i, "  ", error);
+      };
 
-        socket.onclose = () => {
-          console.log("WebSocket connection closed ", i);
-        };
+      socket.onclose = () => {
+        console.log("WebSocket connection closed ", i);
+      };
 
-        sockets.push(socket);
-      }
+      sockets.push(socket);
+    }
 
+    async  function connect() {
+      const socketCount = parseInt(document.getElementById("i1").value);
+      console.log("socket count is ", socketCount)
       for (let i = 0; i < socketCount; i++) {
+        await new Promise(r => setTimeout(r, 100));
         createSocket(i);
       }
-    </script>
-  </body>
+
+    }
+
+    async  function send() {
+     
+      for (let i = 0; i < sockets.length; i++) {
+        await new Promise(r => setTimeout(r, 100));
+        s = sockets[i]
+        o = {"c" : ["product", "create"], "D" : {"name" : "name" + i.toString() , "code" : "code" + i.toString()}}
+        s.send(JSON.stringify(o))
+      }
+
+    }
+
+
+
+
+  </script>
+</body>
+
 </html>
